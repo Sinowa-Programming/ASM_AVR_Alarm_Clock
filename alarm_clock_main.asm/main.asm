@@ -13,24 +13,25 @@
 
 ; Define bit positions for segments A-G and DP
 //rjmp main
-.equ A = 5    ; PORTB5 (pin 11)
-.equ B = 4    ; PORTB4 (pin 7)
-.equ C = 3    ; PORTB3 (pin 4)
-.equ D = 2    ; PORTB2 (pin 2)
-.equ E = 1    ; PORTB1 (pin 1)
-.equ F = 6    ; PORTB6 (pin 10)
-.equ G = 0    ; PORTB0 (pin 5)
-.equ DP = 7   ; PORTB7 (pin 3)
+.equ A = PB3    ; PORTB5 (pin 11)
+.equ B = PD4    ; PORTB4 (pin 7)
+.equ C = PD3    ; PORTB3 (pin 4)
+.equ D = PD2    ; PORTB2 (pin 2)
+.equ E = PD1    ; PORTB1 (pin 1)
+.equ F = PB2    ; PORTB6 (pin 10)
+.equ G = PD5    ; PORTB0 (pin 5)
+.equ DP = PD3   ; PORTB7 (pin 3)
 
 
 
 
 ; Define bit positions for digits D1-D4
-.equ D1 = 4   ; PORTD4 (pin 12)
-.equ D2 = 3   ; PORTD3 (pin 9)
-.equ D3 = 2   ; PORTD2 (pin 8)
-.equ D4 = 1   ; PORTD1 (pin 6)
-       rjmp main
+.equ D1 = PB4   ; PORTD4 (pin 12) PB4
+.equ D2 = PB1   ; PORTD3 (pin 9) PB1
+.equ D3 = PB0   ; PORTD2 (pin 8) PB0
+.equ D4 = PD6   ; PORTD1 (pin 6) PD6
+
+jmp main
 
 
 ; Initialization routine to set data direction registers
@@ -57,27 +58,16 @@ clear_display:
 ; Turn off digit and decimal point
 ; Input: r22 = digit position (0-3)
 turn_off_digit:
-    ldi r21, 0xFF            ; Prepare to turn off digit
-    sbrc r22, 0              ; Check if r22 is 0 (D1)
-    cbr r21, (1<<D1)         ; Clear D1 bit
-    sbrc r22, 1              ; Check if r22 is 1 (D2)
-    cbr r21, (1<<D2)         ; Clear D2 bit
-    sbrc r22, 2              ; Check if r22 is 2 (D3)
-    cbr r21, (1<<D3)         ; Clear D3 bit
-    sbrc r22, 3              ; Check if r22 is 3 (D4)
-    cbr r21, (1<<D4)         ; Clear D4 bit
-    out PORTD, r21        ; Apply to digit port
-    Ret
+    sbrs r22, 0	; if r22 bit 0 is not set : skip:
+    sbi PORTB, D1	;     set D1 high. Turn off digit D1 
+    sbrs r22, 1	; if r22 bit 1 is set : skip:
+    sbi PORTB, D2	;     set D2 high. Turn off digit D2
+    sbrs r22, 2	; if r22 bit 2 is set : skip:
+    sbi PORTB, D3	;     set D3 high. Turn off digit D3
+    sbrs r22, 3	; if r22 bit 3 is set : skip:
+    sbi PORTB, D4	;     set D4 high. Turn off digit D4
 
-
-
-
-
-
-
-
-
-
+    ret
 
 
 ; Set specific digits, using generic function to set segments
@@ -104,7 +94,7 @@ set_digit_1:
 
 ; Set digit to '2'
 set_digit_2:
-    ldi r23, 0b01011011      ; Segment pattern for '2'
+    ldi r23, 0b010110011      ; Segment pattern for '2'
     rjmp set_digit_generic
 
 
@@ -169,19 +159,17 @@ set_digit_9:
 ; Generic function to set digit and segments
 ; Expects r23 with segment pattern, r22 with digit position
 set_digit_generic:
-    out PORTB, r23        ; Output to segment port
-    rcall turn_off_digit     ; Turn off previous digit
-    ldi r21, 0xFF            ; Prepare to turn on specific digit
-    sbrc r22, 0
-    cbr r21, (1<<D1)
-    sbrc r22, 1
-    cbr r21, (1<<D2)
-    sbrc r22, 2
-    cbr r21, (1<<D3)
-    sbrc r22, 3
-    cbr r21, (1<<D4)
-    out PORTD, r21        ; Apply to digit port
-    Ret
+    rcall turn_off_digit     ; update data pins
+    
+    mov r24, r23	; copy r23 into  r14 
+    andi r24, ((1<<A) | (1<<F))
+    out PORTB, r24         ; Mask segment pattern to pins A and F
+    
+    mov r24, r23	; copy r23 into  r14 
+    andi r24, ((1<<B) | (1<<C) | (1<<D) | (1<<E) | (1<<G))
+    out PORTD, r24
+    
+    ret
 
 
 
@@ -192,27 +180,15 @@ main:
 
 
 
-
-    ; Clear the display to ensure it starts blank
+loop:
+   ldi r22, 0b0001
    rcall clear_display
 
-
-
-
-    ; Set the first digit to '8'
-    ; Prepare r22 with the digit position (0 for D1, the first digit)
-    ldi r22, 0
-
-
    rcall set_digit_8        ; Call function to display '8' on the first digit
+    
 
-
-Loop:
-
-
-    ; Loop infinitely to maintain the display
-   rcall set_digit_8        ; Call function to display '8' on the first digit
-    rjmp loop;
+   ; Loop infinitely to maintain the display
+   rjmp loop;
 
 
 
