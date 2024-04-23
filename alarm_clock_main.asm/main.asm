@@ -14,8 +14,8 @@
 ; Define bit positions for segments A-G and DP
 //rjmp main
 .equ A = PB3    ; PORTB5 (pin 11)
-.equ B = PD4    ; PORTB4 (pin 7)
-.equ C = PD3    ; PORTB3 (pin 4)
+.equ B = PD7    ; PORTB4 (pin 7)
+.equ C = PD4    ; PORTB3 (pin 4)
 .equ D = PD2    ; PORTB2 (pin 2)
 .equ E = PD1    ; PORTB1 (pin 1)
 .equ F = PB2    ; PORTB6 (pin 10)
@@ -159,14 +159,22 @@ set_digit_9:
 ; Expects r23 with segment pattern, r22 with digit position
 set_digit_generic:
     rcall turn_off_digit     ; update data pins
-    
-    mov r24, r23	; copy r23 into  r14 
-    andi r24, ((1<<A) | (1<<F))
-    out PORTB, r24         ; Mask segment pattern to pins A and F
-    
-    mov r24, r23	; copy r23 into  r14 
-    andi r24, ((1<<B) | (1<<C) | (1<<D) | (1<<E) | (1<<G))
-    out PORTD, r24
+    sbrc r23, 7	; if r22 bit 3 is set : skip:
+    sbi PORTD, DP	;     set D4 high. Turn off digit D4
+    sbrc r23, 6	; if r22 bit 0 is not set : skip:
+    sbi PORTB, A	;     set D1 high. Turn off digit D1 
+    sbrc r23, 5	; if r22 bit 1 is set : skip:
+    sbi PORTD, B	;     set D2 high. Turn off digit D2
+    sbrc r23, 4	; if r22 bit 2 is set : skip:
+    sbi PORTD, C	;     set D3 high. Turn off digit D3
+    sbrc r23, 3	; if r22 bit 3 is set : skip:
+    sbi PORTD, D	;     set D4 high. Turn off digit D4
+    sbrc r23, 2	; if r22 bit 0 is not set : skip:
+    sbi PORTD, E	;     set D1 high. Turn off digit D1 
+    sbrc r23, 1	; if r22 bit 1 is set : skip:
+    sbi PORTB, F	;     set D2 high. Turn off digit D2
+    sbrc r23, 0	; if r22 bit 2 is set : skip:
+    sbi PORTD, G	;     set D3 high. Turn off digit D3
     
     ret
 
