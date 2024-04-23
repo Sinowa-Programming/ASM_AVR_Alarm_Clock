@@ -59,14 +59,15 @@ clear_display:
 ; Turn off digit and decimal point
 ; Input: r22 = digit position (0-3)
 turn_off_digit:
-    sbrs r22, 0	; if r22 bit 0 is not set : skip:
+    
+    sbrs r22, 3	; if r22 bit 0 is set : skip and leave it set:
     sbi PORTB, D1	;     set D1 high. Turn off digit D1 
-    sbrs r22, 1	; if r22 bit 1 is set : skip:
+    sbrs r22, 2	; if r22 bit 1 is set : skip:
     sbi PORTB, D2	;     set D2 high. Turn off digit D2
-    sbrs r22, 2	; if r22 bit 2 is set : skip:
+    sbrs r22, 1	; if r22 bit 2 is set : skip:
     sbi PORTB, D3	;     set D3 high. Turn off digit D3
-    sbrs r22, 3	; if r22 bit 3 is set : skip:
-    sbi PORTB, D4	;     set D4 high. Turn off digit D4
+    sbrs r22, 0	; if r22 bit 3 is set : skip:
+    sbi PORTD, D4	;     set D4 high. Turn off digit D4
     ret
 
 
@@ -197,11 +198,22 @@ main:
 
 
 loop:
-   ldi r22, 0b0001
    rcall clear_display
 
+   ldi r22, 0b0001
    rcall set_digit_4        ; Call function to display '8' on the first digit
-    
+   rcall clear_display
+
+   ldi r22, 0b0010
+   rcall set_digit_3        ; Call function to display '8' on the first digit
+   rcall clear_display
+
+   ldi r22, 0b0100
+   rcall set_digit_2        ; Call function to display '8' on the first digit
+   rcall clear_display
+
+   ldi r22, 0b1000
+   rcall set_digit_5        ; Call function to display '8' on the first digit
 
    ; Loop infinitely to maintain the display
    rjmp loop;
