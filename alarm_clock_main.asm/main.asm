@@ -66,7 +66,6 @@ turn_off_digit:
     sbi PORTB, D3	;     set D3 high. Turn off digit D3
     sbrs r22, 3	; if r22 bit 3 is set : skip:
     sbi PORTB, D4	;     set D4 high. Turn off digit D4
-
     ret
 
 
