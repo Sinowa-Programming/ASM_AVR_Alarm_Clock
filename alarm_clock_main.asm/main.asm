@@ -1,3 +1,4 @@
+
 ;
 ; alarm_clock_main.asm.asm
 ;
@@ -85,7 +86,7 @@ set_digit_0:
 
 ; Set digit to '1'
 set_digit_1:
-    ldi r23, 0b00000110      ; Segment pattern for '1'
+    ldi r23, 0b00110000      ; Segment pattern for '1' (B, C)
     rjmp set_digit_generic
 
 
@@ -93,7 +94,7 @@ set_digit_1:
 
 ; Set digit to '2'
 set_digit_2:
-    ldi r23, 0b010110011      ; Segment pattern for '2'
+    ldi r23, 0b01101101      ; Segment pattern for '2' (A, B, G, E, D)
     rjmp set_digit_generic
 
 
@@ -101,7 +102,7 @@ set_digit_2:
 
 ; Set digit to '3'
 set_digit_3:
-    ldi r23, 0b01001111      ; Segment pattern for '3'
+    ldi r23, 0b01111001      ; Segment pattern for '3' (A, B, G, C, D)
     rjmp set_digit_generic
 
 
@@ -109,7 +110,7 @@ set_digit_3:
 
 ; Set digit to '4'
 set_digit_4:
-    ldi r23, 0b01100110      ; Segment pattern for '4' (F, B, G, C)
+    ldi r23, 0b00110011      ; Segment pattern for '4' (F, B, G, C)
     rjmp set_digit_generic
 
 
@@ -117,7 +118,7 @@ set_digit_4:
 
 ; Set digit to '5'
 set_digit_5:
-    ldi r23, 0b01101101      ; Segment pattern for '5' (A, F, G, C, D)
+    ldi r23, 0b01011011      ; Segment pattern for '5' (A, F, G, C, D)
     rjmp set_digit_generic
 
 
@@ -125,7 +126,7 @@ set_digit_5:
 
 ; Set digit to '6'
 set_digit_6:
-    ldi r23, 0b01111101      ; Segment pattern for '6' (A, F, G, E, C, D)
+    ldi r23, 0b01011111      ; Segment pattern for '6' (A, F, G, E, C, D)
     rjmp set_digit_generic
 
 
@@ -133,7 +134,7 @@ set_digit_6:
 
 ; Set digit to '7'
 set_digit_7:
-    ldi r23, 0b00000111      ; Segment pattern for '7' (A, B, C)
+    ldi r23, 0b01110000      ; Segment pattern for '7' (A, B, C)
     rjmp set_digit_generic
 
 
@@ -149,7 +150,7 @@ set_digit_8:
 
 ; Set digit to '9'
 set_digit_9:
-    ldi r23, 0b01101111      ; Segment pattern for '9' (A, B, C, D, F, G)
+    ldi r23, 0b01111011      ; Segment pattern for '9' (A, B, C, D, F, G)
     rjmp set_digit_generic
 
 
@@ -199,7 +200,7 @@ loop:
    ldi r22, 0b0001
    rcall clear_display
 
-   rcall set_digit_8        ; Call function to display '8' on the first digit
+   rcall set_digit_4        ; Call function to display '8' on the first digit
     
 
    ; Loop infinitely to maintain the display
