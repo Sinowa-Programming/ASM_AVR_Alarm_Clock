@@ -159,21 +159,29 @@ set_digit_9:
 ; Expects r23 with segment pattern, r22 with digit position
 set_digit_generic:
     rcall turn_off_digit     ; update data pins
-    sbrc r23, 7	; if r22 bit 3 is set : skip:
+    
+    sbrc r23, 7	; if r22 bit 0 is not set : skip:
     sbi PORTD, DP	;     set D4 high. Turn off digit D4
-    sbrc r23, 6	; if r22 bit 0 is not set : skip:
+    
+    sbrc r23, 6	; if r22 bit 1 is set : skip:
     sbi PORTB, A	;     set D1 high. Turn off digit D1 
-    sbrc r23, 5	; if r22 bit 1 is set : skip:
+    
+    sbrc r23, 5	; if r22 bit 2 is set : skip:
     sbi PORTD, B	;     set D2 high. Turn off digit D2
-    sbrc r23, 4	; if r22 bit 2 is set : skip:
+    
+    sbrc r23, 4	; if r22 bit 3 is set : skip:
     sbi PORTD, C	;     set D3 high. Turn off digit D3
-    sbrc r23, 3	; if r22 bit 3 is set : skip:
+    
+    sbrc r23, 3	; if r22 bit 0 is not set : skip:
     sbi PORTD, D	;     set D4 high. Turn off digit D4
-    sbrc r23, 2	; if r22 bit 0 is not set : skip:
+    
+    sbrc r23, 2	; if r22 bit 1 is set : skip:
     sbi PORTD, E	;     set D1 high. Turn off digit D1 
-    sbrc r23, 1	; if r22 bit 1 is set : skip:
+    
+    sbrc r23, 1	; if r22 bit 2 is set : skip:
     sbi PORTB, F	;     set D2 high. Turn off digit D2
-    sbrc r23, 0	; if r22 bit 2 is set : skip:
+    
+    sbrc r23, 0
     sbi PORTD, G	;     set D3 high. Turn off digit D3
     
     ret
