@@ -1,0 +1,42 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.2.8</VERSION>
+ <DEVICE>"ATmega328P"</DEVICE>
+ <WORKING_DIR>C:\Users\sochin1519\OneDrive - Florida Gulf Coast University\Projects\ASM_AVR_Alarm_Clock\alarm_clock_main.asm\Debug</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc</DIR>
+  <DIR>C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avrassembler\Include</DIR>
+  <DIR></DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>C:\Users\sochin1519\OneDrive - Florida Gulf Coast University\Projects\ASM_AVR_Alarm_Clock\alarm_clock_main.asm\main.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>C:\Users\sochin1519\OneDrive - Florida Gulf Coast University\Projects\ASM_AVR_Alarm_Clock\alarm_clock_main.asm\Debug\alarm_clock_main.asm.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>alarm_clock_main.asm.hex</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>alarm_clock_main.asm.map</FILE>
+  <FILE>alarm_clock_main.asm.lss</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <main><FILE>C:\Users\sochin1519\OneDrive - Florida Gulf Coast University\Projects\ASM_AVR_Alarm_Clock\alarm_clock_main.asm\main.asm</FILE><LINE>178</LINE></main>
+  <init_display><FILE>C:\Users\sochin1519\OneDrive - Florida Gulf Coast University\Projects\ASM_AVR_Alarm_Clock\alarm_clock_main.asm\main.asm</FILE><LINE>38</LINE></init_display>
+  <clear_display><FILE>C:\Users\sochin1519\OneDrive - Florida Gulf Coast University\Projects\ASM_AVR_Alarm_Clock\alarm_clock_main.asm\main.asm</FILE><LINE>48</LINE></clear_display>
+  <turn_off_digit><FILE>C:\Users\sochin1519\OneDrive - Florida Gulf Coast University\Projects\ASM_AVR_Alarm_Clock\alarm_clock_main.asm\main.asm</FILE><LINE>60</LINE></turn_off_digit>
+  <set_digit_0><FILE>C:\Users\sochin1519\OneDrive - Florida Gulf Coast University\Projects\ASM_AVR_Alarm_Clock\alarm_clock_main.asm\main.asm</FILE><LINE>80</LINE></set_digit_0>
+  <set_digit_generic><FILE>C:\Users\sochin1519\OneDrive - Florida Gulf Coast University\Projects\ASM_AVR_Alarm_Clock\alarm_clock_main.asm\main.asm</FILE><LINE>161</LINE></set_digit_generic>
+  <set_digit_1><FILE>C:\Users\sochin1519\OneDrive - Florida Gulf Coast University\Projects\ASM_AVR_Alarm_Clock\alarm_clock_main.asm\main.asm</FILE><LINE>88</LINE></set_digit_1>
+  <set_digit_2><FILE>C:\Users\sochin1519\OneDrive - Florida Gulf Coast University\Projects\ASM_AVR_Alarm_Clock\alarm_clock_main.asm\main.asm</FILE><LINE>96</LINE></set_digit_2>
+  <set_digit_3><FILE>C:\Users\sochin1519\OneDrive - Florida Gulf Coast University\Projects\ASM_AVR_Alarm_Clock\alarm_clock_main.asm\main.asm</FILE><LINE>104</LINE></set_digit_3>
+  <set_digit_4><FILE>C:\Users\sochin1519\OneDrive - Florida Gulf Coast University\Projects\ASM_AVR_Alarm_Clock\alarm_clock_main.asm\main.asm</FILE><LINE>112</LINE></set_digit_4>
+  <set_digit_5><FILE>C:\Users\sochin1519\OneDrive - Florida Gulf Coast University\Projects\ASM_AVR_Alarm_Clock\alarm_clock_main.asm\main.asm</FILE><LINE>120</LINE></set_digit_5>
+  <set_digit_6><FILE>C:\Users\sochin1519\OneDrive - Florida Gulf Coast University\Projects\ASM_AVR_Alarm_Clock\alarm_clock_main.asm\main.asm</FILE><LINE>128</LINE></set_digit_6>
+  <set_digit_7><FILE>C:\Users\sochin1519\OneDrive - Florida Gulf Coast University\Projects\ASM_AVR_Alarm_Clock\alarm_clock_main.asm\main.asm</FILE><LINE>136</LINE></set_digit_7>
+  <set_digit_8><FILE>C:\Users\sochin1519\OneDrive - Florida Gulf Coast University\Projects\ASM_AVR_Alarm_Clock\alarm_clock_main.asm\main.asm</FILE><LINE>144</LINE></set_digit_8>
+  <set_digit_9><FILE>C:\Users\sochin1519\OneDrive - Florida Gulf Coast University\Projects\ASM_AVR_Alarm_Clock\alarm_clock_main.asm\main.asm</FILE><LINE>152</LINE></set_digit_9>
+  <loop><FILE>C:\Users\sochin1519\OneDrive - Florida Gulf Coast University\Projects\ASM_AVR_Alarm_Clock\alarm_clock_main.asm\main.asm</FILE><LINE>184</LINE></loop>
+ </LABELS>
+</ASSEMBLER_INFO>
