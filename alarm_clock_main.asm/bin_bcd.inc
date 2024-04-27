@@ -68,8 +68,10 @@ shift_check:
 	brne low_nibble_check		;	continue operating
 					; else: cleanup and return
 	; Clean up function and return
-	pop binary_reg
-	pop nibble
-	pop shift_cntr
 	pop r20
+	pop shift_cntr
+	pop nibble
+	pop binary_reg
+	
+	
 	ret		; end function

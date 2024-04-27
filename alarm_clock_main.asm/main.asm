@@ -7,11 +7,17 @@ main:
 
 	; Prepare r21 with the digit to be displayed( in binary )
 	; Prepare r22 with the digit position (0 for D1, the first digit)
-	ldi r22, 0b1	; Display on the low two bytes
-	ldi r21, 19	; Display the number 19
+	ldi r22, 0b100	; Display on the low two bytes
+	ldi r21, 1	; Display the number 1
 	rcall display_digits
+	
+	;sbi DDRD, PD2
 
 Loop:
+	;sbi PORTD, PD2
+	rcall display_digits
+	;rcall clear_display
+
 	; Loop infinitely to maintain the display
 	rjmp loop;
 
