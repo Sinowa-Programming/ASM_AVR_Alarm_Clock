@@ -24,7 +24,7 @@ spiInitMaster:
           ori       r17, (0<<SPR0) 
           out       SPCR, r17
 
-	;sbi	SPIPORT, SS		; unlatch shift register
+	sbi	SPIPORT, SS		; unlatch shift register
 
           ret
 
@@ -36,7 +36,7 @@ spiSend:
           push      r17
 	push	r18	; used for the delay
 	push	r16	; used for the delay
-	rcall spiInitMaster
+	;rcall spiInitMaster
 
 	cbi	SPIPORT, SS		; latch the shift register
 	out	SPDR, r0			; output the 7s-digit
