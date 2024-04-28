@@ -154,5 +154,5 @@ digits: .db 0b01111110,\      ; Segment pattern for '0'
 
 ; Includes. Placed down here so they have to be called to be used
 ; ---------------------------------------------------------
-.include "spi.inc"		; Handles the serial to parallel communication
 .include "bin_bcd.inc"	; Converts binary to the bcd
+.include "spi.inc"		; Handles the serial to parallel communication

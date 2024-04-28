@@ -63,7 +63,7 @@ delay_ms:
           ldi       r18,DELAY_S
 delay_ms_1:
 
-          ldi       r17,100
+          ldi       r17,50
 delay_ms_2:
 
           ldi       r16,250
@@ -74,7 +74,7 @@ delay_ms_3:
           brne      delay_ms_3          ; 250 * 5 = 1250
 
           dec       r17
-          brne      delay_ms_2          ; 100 * 1250 = 1250K
+          brne      delay_ms_2          ; 50 * 1250 = 1250K
 
 dealy_ms_end:
           ret
