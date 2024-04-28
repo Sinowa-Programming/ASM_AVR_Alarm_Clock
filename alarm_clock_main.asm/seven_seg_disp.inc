@@ -134,21 +134,20 @@ display_digits:
 	ret
 
 
-digits: .db 0b01111110, 0b00000110, 0b01011011, 0b01001111, 0b01100110, 0b01101101, 0b01111101, 0b00000111, 0b01111111, 0b01101111	; Segment pattern for '9' (A, B, C, D, F, G)
-
+digits: .db 0b01111110,0b00000110,0b01101101,0b01111001,0b00110011,0b01011011,0b01011111,0b01110000,0b01111111,0b01110011
 
 ; List of digits for 7 segment display
 /*
-digits: .db 0b00111111,\      ; Segment pattern for '0'
+digits: .db 0b01111110,\      ; Segment pattern for '0'
 	0b00000110,\	; Segment pattern for '1'
-	0b01011011,\	; Segment pattern for '2'
-	0b01001111,\	; Segment pattern for '3'
-	0b01100110,\	; Segment pattern for '4' (F, B, G, C)
-	0b01101101,\	; Segment pattern for '5' (A, F, G, C, D)
-	0b01111101,\	; Segment pattern for '6' (A, F, G, E, C, D)
-	0b00000111,\	; Segment pattern for '7' (A, B, C)
+	0b01101101,\	; Segment pattern for '2'
+	0b01111001,\	; Segment pattern for '3'
+	0b00110011,\	; Segment pattern for '4' (F, B, G, C)
+	0b01011011,\	; Segment pattern for '5' (A, F, G, C, D)
+	0b01011111,\	; Segment pattern for '6' (A, F, G, E, C, D)
+	0b01110000,\	; Segment pattern for '7' (A, B, C)
 	0b01111111,\	; Segment pattern for '8' (All segments) except dp
-	0b01101111	; Segment pattern for '9' (A, B, C, D, F, G)
+	0b01110011	; Segment pattern for '9' (A, B, C, D, F, G)
 */
 
 
