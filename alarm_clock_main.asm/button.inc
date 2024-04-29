@@ -13,7 +13,13 @@
 ; ------------------------------------------------------------
 gpioInit:
 	clr flagRegister
-; set input button
+
+	; Make led buttons output
+	sbi DDRC, buttonStatus
+	sbi DDRC, timeStatus
+	sbi DDRC, alarmStatus
+
+	; set input button
           cbi       DDRD, pinT      ; set pin to input (D1)
           sbi       PORTD,pinT      ; engage pull-up
 
@@ -32,11 +38,7 @@ gpioInit:
 ; void buttonPoll()
 ; ------------------------------------------------------------
 buttonPoll:
-	sbi DDRC, buttonStatus
-	sbi DDRC, timeStatus
-	sbi DDRC, alarmStatus
-
-	sbi PORTC, PC5 	
+	sbi PORTC, buttonStatus 	
 	
           sbis      PIND, PIND5          ; skip rjmp when pin goes high
           rcall      setTime            ; wait for pin to be driven high
@@ -58,7 +60,9 @@ buttonPoll:
 .def alarmH = r6
 
 setAlarm:
-          clr r8
+          cbi PORTC, PD0		; turn off the alarm when any button is pressed
+	
+	clr r8
           inc r8
 	eor flagRegister,r8
 
@@ -75,6 +79,8 @@ setAlarm:
 ; void setTime()
 ; ------------------------------------------------------------
 setTime:
+	cbi PORTC, PD0		; turn off the alarm when any button is pressed
+	
           clr r8
           inc r8
           inc r8
@@ -97,6 +103,8 @@ setTime:
 ; void setHour()
 ; ------------------------------------------------------------
 setHour:
+	cbi PORTC, PD0		; turn off the alarm when any button is pressed
+	
 	push r19
 	ldi r19, 24
           sbrc flagRegister, 0
@@ -120,6 +128,8 @@ setHour:
 ; void setMin()
 ; ------------------------------------------------------------
 setMin:
+	cbi PORTC, PD0		; turn off the alarm when any button is pressed
+	
 	push r19
 	sbrc flagRegister, 0
           inc alarmM
