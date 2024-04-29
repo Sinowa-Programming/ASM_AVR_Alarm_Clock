@@ -1,4 +1,4 @@
-;
+; Author: Siang
 ; Desc: This file is the implementation of the double dabble algorithm.
 ; Inputs:
 ;	r21 - The binary value to convert to bcd

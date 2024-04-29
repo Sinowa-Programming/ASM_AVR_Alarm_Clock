@@ -38,6 +38,10 @@ gpioInit:
 ; void buttonPoll()
 ; ------------------------------------------------------------
 buttonPoll:
+	push r16	; For delay
+	push r18
+	push r17
+
 	sbi PORTC, buttonStatus 	
 	
           sbis      PIND, PIND5          ; skip rjmp when pin goes high
@@ -51,6 +55,12 @@ buttonPoll:
 	
           sbis      PIND, PIND2          ; skip rjmp when pin goes high    
           rcall      setMin            ; wait for pin to be driven high
+	
+	call	delay_ms	
+
+	pop r17
+	pop r18
+	pop r16
 
           ret                          ; buttonISR
 
@@ -62,10 +72,12 @@ buttonPoll:
 setAlarm:
           cbi PORTC, PD0		; turn off the alarm when any button is pressed
 	
+
 	clr r8
           inc r8
-	eor flagRegister,r8
+	eor flagRegister,r8	; flagRegister alarm bit toggle
 
+	; toggle set alarm led
 	push r19
 	in r8, PORTC
 	ldi r19, (1<<alarmStatus)
@@ -84,8 +96,9 @@ setTime:
           clr r8
           inc r8
           inc r8
-          eor flagRegister,r8
+          eor flagRegister,r8	; flagRegister time bit toggle
 
+	; toggle set time led
 	push r19
 	in r8, PORTC
 	ldi r19, (1<<timeStatus)
@@ -94,9 +107,9 @@ setTime:
 	pop r19
           
 	
-	;sei
-          ;SBRC flagRegister, 1
-          ;cli
+	sei
+          SBRC flagRegister, 1
+          cli
 
           ret
 
@@ -114,16 +127,22 @@ setHour:
 
 	cbi PORTC, PC5 	
 
+	; Cap the changed value
+          sbrc flagRegister, 0
+	jmp capAlarmH
+          sbrc flagRegister, 1
+	jmp capTimeH
+
+capAlarmH:
 	cp alarmH, r19
 	brne exit
 	clr alarmH                  ; Reset minutes and increment hours (Assuming r31 also handles hours temporarily)
-	
+	jmp exit
+capTimeH:
 	cp r3, r19
 	brne exit
 	clr r3                  ; Reset minutes and increment hours (Assuming r31 also handles hours temporarily)
-
-
-          rjmp exit
+	jmp exit
 
 ; void setMin()
 ; ------------------------------------------------------------
@@ -138,15 +157,21 @@ setMin:
 
 	cbi PORTC, PC5 	
 
+	; Choose which to cap
+          sbrc flagRegister, 0
+	jmp capAlarmM
+          sbrc flagRegister, 1
+	jmp capTimeM
+
+capAlarmM:
 	cp alarmM, r15
 	brne exit
 	clr alarmM                  ; Reset minutes and increment hours (Assuming r31 also handles hours temporarily)
-
-	
+	jmp exit
+capTimeM:
 	cp r2, r15
 	brne exit
 	clr r2                  ; Reset minutes and increment hours (Assuming r31 also handles hours temporarily)
-
 
 exit:	
 	pop r19

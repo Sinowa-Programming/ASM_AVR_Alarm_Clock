@@ -1,16 +1,9 @@
+; Author: Siang
+; Desc: This file is the main file that handles the displaying of a two digit
+; binary number to BCD
 ; --------------------------------------------
 ; 7 segment display defines
 ; Define bit positions for segments A-G and DP
-/*
-.equ A = 5 
-.equ B = 4    
-.equ C = 3
-.equ D = 2
-.equ E = 1
-.equ F = 6
-.equ G = 0
-.equ DP = 7
-*/
 
 ; Define bit positions for digits D1-D4
 .equ D1 = PD6   ; PORTD6 (pin 6)
