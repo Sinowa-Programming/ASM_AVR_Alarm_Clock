@@ -2,18 +2,25 @@
 .org 0x0000
     rjmp main           ; Jump to start of program
 
+
 .org 0x0016             ; Timer1 Compare Match A vector for ATmega328P
     rjmp TIMER1_COMPA_ISR
 
 main:
-clr r1
-clr r2
-clr r3
-ldi r19,60 
-mov r15,r19
-ldi r19,24
-mov r14,r19
-clr r19;
+	rcall gpioInit
+	ldi r25, 10
+	clr alarmH
+	mov alarmM, r25
+
+	clr r25
+	clr r1
+	clr r2
+	clr r3
+	ldi r19,60 
+	mov r15,r19
+	ldi r19,24
+	mov r14,r19
+	clr r19;
 
 ; Set PC0 as output
 
@@ -33,7 +40,7 @@ clr r19;
 	                ; Define the CPU frequency and Timer constants
 .equ F_CPU = 16000000        ; CPU Frequency: 16 MHz
 .equ PRESCALER = 1024        ; Timer Prescaler
-.equ TICKS = 1        ; Ticks (F_CPU / PRESCALER / 1 second)
+.equ TICKS = 625        ; Ticks (F_CPU / PRESCALER / 1 second)
 
 ;1 = 1/15625 of a second
 ;5 = 1/3125 of a second
@@ -71,6 +78,9 @@ TIMER1_COMPA_ISR:
     brne EXIT_ISR
     clr r1                  ; Reset seconds and check minutes
     inc r2                  ; Increment minutes register (Assuming r31 holds minutes)
+	
+	rcall alarmcheck
+
     cp r2, r15
     brne EXIT_ISR
     clr r2                  ; Reset minutes and increment hours (Assuming r31 also handles hours temporarily)
@@ -89,6 +99,7 @@ TIMER1_COMPA_ISR:
 
 
 EXIT_ISR:
+
 	sei;
 	reti;
 
@@ -97,45 +108,61 @@ EXIT_ISR:
 	;sbi DDRD, PD2
 
 Loop:
+	rcall buttonPoll	
 	
-
-
+	sbrc flagRegister, 0
+	jmp display_alarm
+	
+display_time:
 ;sbi PORTD, PD2
-        mov r21,r2
-
-ldi r22,0b1000
-	rcall display_digits
-               mov r21,r3;
-ldi r22,0b0010
-	rcall display_digits
-	
+	mov r21,r2
 	; Loop infinitely to maintain the display
 
-; Includes. Placed down here so they have to be called to be used
-; ---------------------------------------------------------
-ldi r19,10
-cp r3,r19
-breq alarmcheck
- 
+	ldi r22,0b1000
+	rcall display_digits
+	mov r21,r3;
+	ldi r22,0b0010
+	rcall display_digits
+	
+	jmp after_dis	
+
+display_alarm:
+	mov r21, alarmM
+	ldi r22,0b1000
+	rcall display_digits
+	mov r21,alarmH	;h
+	ldi r22,0b0010
+	rcall display_digits
+
+after_dis:
+
+
        	rjmp loop;
 
 
 alarmcheck:
-ldi r19,10
-cp r2,r19
-breq alarm
-rjmp loop 
+	cpse r3, alarmH
+	ret
+
+	cp r2,alarmM
+	breq alarm
+	ret 
 alarm:
- ; Set PC0 as output
+	; Set PC0 as output
 
-; Set PC0 as output
-ldi r16, (1<<PC0)   ; Load the mask for PC0 into register r16
-out DDRC, r16       ; Set PC0 as output by writing to DDRC
+	; Set PC0 as output
+	;ldi r16, (1<<PC0)   ; Load the mask for PC0 into register r16
+	;out DDRC, r16       ; Set PC0 as output by writing to DDRC
+	sbi DDRC, PC0
+	sbi PORTC, PC0
+	; Set PC0 high
+	;ldi r16, (1<<PC0)   ; Load the mask for PC0 again into register r16
+	;out PORTC, r16      ; Set PC0 high by writing to PORTC
 
-; Set PC0 high
-ldi r16, (1<<PC0)   ; Load the mask for PC0 again into register r16
-out PORTC, r16      ; Set PC0 high by writing to PORTC
+	ret
 
-rjmp loop
 
+; Includes. Placed down here so they have to be called to be used
+; ---------------------------------------------------------
+.include "button.inc"
 .include "seven_seg_disp.inc"	; Displays the binary on the seven seg disp.
