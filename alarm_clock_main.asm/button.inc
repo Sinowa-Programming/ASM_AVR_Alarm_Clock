@@ -1,15 +1,19 @@
+; Button pin defines
 .equ pinT = PD5
 .equ pinA = PD4
 .equ pinH = PD3
 .equ pinM = PD2
+; Register defines
 .def flagRegister = r7
 
+; Led pin defines
 .equ buttonStatus = PC5
 .equ timeStatus = PC4
 .equ alarmStatus = PC3
 
 ; void
 ; gpioInit()
+; Setups all of the status leds and buttons
 ; ------------------------------------------------------------
 gpioInit:
 	clr flagRegister
@@ -36,6 +40,7 @@ gpioInit:
 
 
 ; void buttonPoll()
+; Poll all of the buttons and do their respective operations.
 ; ------------------------------------------------------------
 buttonPoll:
 	push r16	; For delay
@@ -56,7 +61,7 @@ buttonPoll:
           sbis      PIND, PIND2          ; skip rjmp when pin goes high    
           rcall      setMin            ; wait for pin to be driven high
 	
-	call	delay_ms	
+	call	delay_ms		; Slow down the button program to slow down the button update. This function should be in a interrupt to avoid this.
 
 	pop r17
 	pop r18
@@ -65,6 +70,7 @@ buttonPoll:
           ret                          ; buttonISR
 
 ; void setAlarm()
+; Toggles the alarm flag register
 ; ------------------------------------------------------------
 .def alarmM = r5                        
 .def alarmH = r6
@@ -89,6 +95,7 @@ setAlarm:
           ret
 
 ; void setTime()
+; Toggles the time flag register
 ; ------------------------------------------------------------
 setTime:
 	cbi PORTC, PD0		; turn off the alarm when any button is pressed
@@ -106,7 +113,7 @@ setTime:
 	out PORTC, r8
 	pop r19
           
-	
+	; Pause the timer while setting time
 	sei
           SBRC flagRegister, 1
           cli
@@ -118,6 +125,7 @@ setTime:
 setHour:
 	cbi PORTC, PD0		; turn off the alarm when any button is pressed
 	
+	; increment the register based on the bits set in the flag register
 	push r19
 	ldi r19, 24
           sbrc flagRegister, 0
@@ -133,18 +141,19 @@ setHour:
           sbrc flagRegister, 1
 	jmp capTimeH
 
-capAlarmH:
+capAlarmH:	; Prevent the alarm hour from going over 24 hours
 	cp alarmH, r19
 	brne exit
 	clr alarmH                  ; Reset minutes and increment hours (Assuming r31 also handles hours temporarily)
 	jmp exit
-capTimeH:
+capTimeH:		; Prevent the time hour from going over 24 hours
 	cp r3, r19
 	brne exit
 	clr r3                  ; Reset minutes and increment hours (Assuming r31 also handles hours temporarily)
 	jmp exit
 
 ; void setMin()
+; Increases the time of the alarm/time based on the flag register's bits
 ; ------------------------------------------------------------
 setMin:
 	cbi PORTC, PD0		; turn off the alarm when any button is pressed
@@ -163,17 +172,17 @@ setMin:
           sbrc flagRegister, 1
 	jmp capTimeM
 
-capAlarmM:
+capAlarmM:	; Prevent the alarm minutes from going over 60 minutes
 	cp alarmM, r15
 	brne exit
 	clr alarmM                  ; Reset minutes and increment hours (Assuming r31 also handles hours temporarily)
 	jmp exit
-capTimeM:
+capTimeM:		; Prevent the time minutes from going over 60 minutes
 	cp r2, r15
 	brne exit
 	clr r2                  ; Reset minutes and increment hours (Assuming r31 also handles hours temporarily)
 
-exit:	
+exit:	; Time changing is done
 	pop r19
        ret
 

@@ -6,42 +6,13 @@
 .org 0x0016             ; Timer1 Compare Match A vector for ATmega328P
     rjmp TIMER1_COMPA_ISR
 
-main:
-	rcall gpioInit
-	ldi r25, 10
-	clr alarmH
-	mov alarmM, r25
-
-	clr r25
-	clr r1
-	clr r2
-	clr r3
-	ldi r19,60 
-	mov r15,r19
-	ldi r19,24
-	mov r14,r19
-	clr r19;
-
-; Set PC0 as output
-
-
-	; Initialize the display (set data direction registers)
-	rcall init_display
-	
-	; Clear the display to ensure it starts blank
-	rcall clear_display
-
-	; Prepare r21 with the digit to be displayed( in binary )
-	; Prepare r22 with the digit position (0 for D1, the first digit)
-;	ldi r22, 0b100	; Display on the low two bytes
-	;ldi r21, 1	; Display the number 1
-	;rcall display_digits
-          
 	                ; Define the CPU frequency and Timer constants
 .equ F_CPU = 16000000        ; CPU Frequency: 16 MHz
 .equ PRESCALER = 1024        ; Timer Prescaler
 .equ TICKS = 625        ; Ticks (F_CPU / PRESCALER / 1 second)
 
+; Ticks is currently going about 1 second for every minute. Ticks should be
+; 15625 for 1 minute
 ;1 = 1/15625 of a second
 ;5 = 1/3125 of a second
 ;25 = 1/625 of a second
@@ -49,7 +20,38 @@ main:
 ;625 = 1/25 of second
 ;3125= 1/5 of second
 ;15625 = 1 second
-;62500 = 4 seconds per 	; Timer1 CTC Setup
+;62500 = 4 seconds per 
+
+
+main:
+	rcall gpioInit
+	
+	; Clear the alarm and set it to 10 after midnight (for testing purposes)
+	ldi r25, 10
+	clr alarmH
+	mov alarmM, r25
+
+	; Clear used registers
+	clr r25
+	clr r1
+	clr r2
+	clr r3
+	
+	; hold hour and minute max values in registers r15 and r19
+	ldi r19,60 
+	mov r15,r19
+	ldi r19,24
+	mov r14,r19
+	clr r19;
+
+	; Initialize the display (set data direction registers)
+	rcall init_display
+	
+	; Clear the display to ensure it starts blank
+	rcall clear_display
+
+	
+	; Timer1 CTC Setup
 	ldi r24, high(TICKS)       ; High byte of TICKS
 	ldi r25, low(TICKS)        ; Low byte of TICKS
 	sts OCR1AH, r24              ; Set high byte of OCR1A
@@ -67,102 +69,82 @@ main:
 	; Global Interrupt Enable
 	sei
                                   
-	 rjmp loop
+	rjmp loop
 
 TIMER1_COMPA_ISR:
-    ; Use r1 and r31 for seconds and minutes respectively
-           
-    inc r1                  ; Increment seconds register (Assuming r1 holds seconds)
-    cp r1, r15
+	; Use r1 and r31 for seconds and minutes respectively 
+	inc r1                  ; Increment seconds register (Assuming r1 holds seconds)
+	cp r1, r15
 
-    brne EXIT_ISR
-    clr r1                  ; Reset seconds and check minutes
-    inc r2                  ; Increment minutes register (Assuming r31 holds minutes)
+	brne EXIT_ISR
+	clr r1                  ; Reset seconds and check minutes
+	inc r2                  ; Increment minutes register (Assuming r31 holds minutes)
 	
 	rcall alarmcheck
 
-    cp r2, r15
-    brne EXIT_ISR
-    clr r2                  ; Reset minutes and increment hours (Assuming r31 also handles hours temporarily)
-; Set PC0 high
+	cp r2, r15
+	brne EXIT_ISR
+	clr r2                  ; Reset minutes and increment hours (Assuming r31 also handles hours temporarily)
 
-
-
-
-    ; Assuming r1 will be reused for hours as a simplistic example
-    inc r3                  ; Increment hours (Note: Adjust as necessary for your system)
-    cp r3, r14
-    brne EXIT_ISR
-    clr r3;
-   
-
+	; Assuming r1 will be reused for hours as a simplistic example
+	inc r3                  ; Increment hours (Note: Adjust as necessary for your system)
+	cp r3, r14
+	brne EXIT_ISR
+	clr r3
 
 
 EXIT_ISR:
+	sei
+	reti
 
-	sei;
-	reti;
-
-
-
-	;sbi DDRD, PD2
 
 Loop:
 	rcall buttonPoll	
 	
+	; Choose what time to display ( alarm/time )	
 	sbrc flagRegister, 0
 	jmp display_alarm
 	
 display_time:
-;sbi PORTD, PD2
-	mov r21,r2
 	; Loop infinitely to maintain the display
 
-	ldi r22,0b1000
+	mov r21,r2
+	ldi r22,0b1000	; Display the the lower two digits
 	rcall display_digits
-	mov r21,r3;
-	ldi r22,0b0010
+
+	mov r21,r3
+	ldi r22,0b0010	; display the top two digits
 	rcall display_digits
 	
-	jmp after_dis	
+	jmp after_dis
 
-display_alarm:
+display_alarm:	; Show the alarm time
 	mov r21, alarmM
-	ldi r22,0b1000
+	ldi r22,0b1000	; Display the lower two digits
 	rcall display_digits
-	mov r21,alarmH	;h
-	ldi r22,0b0010
+	mov r21,alarmH
+	ldi r22,0b0010	; Display the top two digits
 	rcall display_digits
 
 after_dis:
+	rjmp loop
 
 
-       	rjmp loop;
-
-
-alarmcheck:
+alarmcheck:	; Checks if the current time == alarm time
 	cpse r3, alarmH
 	ret
 
 	cp r2,alarmM
 	breq alarm
 	ret 
-alarm:
-	; Set PC0 as output
-
-	; Set PC0 as output
-	;ldi r16, (1<<PC0)   ; Load the mask for PC0 into register r16
-	;out DDRC, r16       ; Set PC0 as output by writing to DDRC
+alarm:	; sound the alarm
 	sbi DDRC, PC0
 	sbi PORTC, PC0
-	; Set PC0 high
-	;ldi r16, (1<<PC0)   ; Load the mask for PC0 again into register r16
-	;out PORTC, r16      ; Set PC0 high by writing to PORTC
 
 	ret
 
 
 ; Includes. Placed down here so they have to be called to be used
 ; ---------------------------------------------------------
-.include "button.inc"
+.include "button.inc"	; For the button polling loop ( should have put this inside of timer that goes off every 1/4 second or so)
 .include "seven_seg_disp.inc"	; Displays the binary on the seven seg disp.
